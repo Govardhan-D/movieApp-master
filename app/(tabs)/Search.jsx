@@ -7,22 +7,27 @@ import Images from '../../assets/images/Images';
 import Icons from '../../assets/icons/icons';
 import SearchBar from '../../components/SearchBar';
 import MovieCard from '../../components/MovieCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 
 const Search = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const { data, loading, error, refetch } = useFetch(() => 
+  const [searchQuery, setSearchQuery] = useState('');
+  console.log('searchQuery:', searchQuery, typeof searchQuery);
+
+
+  const { data, loading, error, refetch, reset } = useFetch(() => 
         fetchMovies({
         query: searchQuery
         }), false
   )
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      if (searchQuery.trim() !== '') {
+      if (searchQuery.trim()) {
         refetch();
+      } else{
+        reset()
       }
-    }, 500); // 500ms delay
+    }, 500); 
 
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
@@ -32,34 +37,44 @@ const Search = () => {
     <SafeAreaProvider>
       <SafeAreaView className="flex-1 bg-primary">
         <Image source={Images.bg} className="absolute w-full z-0"/>
-        <ScrollView className="px-5" showsVerticalScrollIndicator={false}
+        <ScrollView className="justifyCenter itemsCenter px-5" showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           minHeight: "100%",
           paddingBottom: 10
         }}>
           <Image source={Icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
+          <SearchBar onPress={() => {}} onChangeText={(text) => {setSearchQuery(String(text))}}/>
+          {searchQuery && <Text className="text-white font-thin mt-2">search results for <Text className="font-bold">{searchQuery}</Text></Text>}
 
-          <SearchBar onPress={() => {}} onChangeText={(text) => {setSearchQuery(text)}}/>
           {loading && <Text>Loading...</Text>}
+          
+
           {data && data.length>0 && <FlatList 
                                     data={data} 
-                                    renderItem={({item}) => <MovieCard {...item} />}  
+                                    renderItem={({item}) => <MovieCard movie={item} />}  
                                     keyExtractor={(item) => item.id.toString()}
                                     numColumns={3}
                                     columnWrapperStyle={{
-                                      justifyContent: "flex-start",
-                                      gap: 20,
+                                      justifyContent: "center",
+
+                                      gap: 16,
+                                      marginVertical: 16,
                                       paddingRight: 5,
                                       marginBottom: 10,
                                     }}
                                     className="mt-2 pb-32"
                                     scrollEnabled={false}
+                                    contentContainerStyle={{paddingBottom: 100}}
+                                    ListEmptyComponent={() =>
+                                      !loading && !error ? (
+                                        <Text className="text-white-50">No Results found</Text>
+                                      ) : null
+                                    }
 
 
                                     />}
 
-          {error && <Text className="text-white">{error}</Text>}
-          <Text className="text-white">{searchQuery}</Text>
+                {error && <Text className="text-white">{error.message || String(error)}</Text>}
 
         </ScrollView>
 
