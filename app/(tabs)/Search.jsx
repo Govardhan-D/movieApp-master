@@ -8,22 +8,22 @@ import Icons from '../../assets/icons/icons';
 import SearchBar from '../../components/SearchBar';
 import MovieCard from '../../components/MovieCard';
 import { useState, useEffect, useRef } from 'react';
+import { updateRecord } from '../../services/appwrite';
 
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  console.log('searchQuery:', searchQuery, typeof searchQuery);
-
-
   const { data, loading, error, refetch, reset } = useFetch(() => 
         fetchMovies({
         query: searchQuery
         }), false
   )
+
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
+    const delayDebounce = setTimeout(async () => {
       if (searchQuery.trim()) {
-        refetch();
+        await refetch();
+
       } else{
         reset()
       }
@@ -31,6 +31,12 @@ const Search = () => {
 
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if(data?.length>0 && data?.[0]) updateRecord(searchQuery, data[0]);
+
+
+  }, [data])
 
 
   return (
@@ -43,7 +49,7 @@ const Search = () => {
           paddingBottom: 10
         }}>
           <Image source={Icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
-          <SearchBar onPress={() => {}} onChangeText={(text) => {setSearchQuery(String(text))}}/>
+          <SearchBar onPress={() => {}} onChangeText={(text) => {setSearchQuery(String(text))}} value=""/>
           {searchQuery && <Text className="text-white font-thin mt-2">search results for <Text className="font-bold">{searchQuery}</Text></Text>}
 
           {loading && <Text>Loading...</Text>}

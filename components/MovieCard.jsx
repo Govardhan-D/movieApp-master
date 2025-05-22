@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { Image, Text, TouchableOpacity } from "react-native";
 
 export default function MovieCard({movie}){
@@ -80,7 +81,7 @@ export default function MovieCard({movie}){
       "name": "Western"
     }
   ]
-
+    console.log(movie.id)
 
     const IMG_BASE_URL = "https://image.tmdb.org/t/p/w185/";
     const URL = `${IMG_BASE_URL}${movie.poster_path}`
@@ -93,15 +94,17 @@ export default function MovieCard({movie}){
 
     
     return(
+      <Link href={`/movies/${movie.id}`} asChild>
         <TouchableOpacity className="w-[30%]">
             <Image
             source={{ uri: URL }}
-            className="w-133 h-52 rounded-lg"
+            className="w-full h-52 rounded-lg"
             resizeMode="cover"
             />
             <Text className="text-white font-bold text-sm mt-2" numberOfLines={1}>{movie.title}</Text>
             <Text className="text-white text-[10px] font-bold mt-[8px]">⭐ {movie.vote_average.toFixed(1)}</Text>
             <Text className="text-white font-medium text-[10px] mt-[5px]">{genre_names}</Text>
         </TouchableOpacity>
+      </Link>
     )
 }

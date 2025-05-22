@@ -5,6 +5,7 @@ import person from './person.png'
 import save from './save.png'
 import search from './search.png'
 import star from './star.png'
+import play from './play.png'
 
-const Icons = {home, arrow, logo, person, save, search, star}
+const Icons = {home, arrow, logo, person, save, search, star, play}
 export default Icons;

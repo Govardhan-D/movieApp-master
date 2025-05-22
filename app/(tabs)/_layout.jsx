@@ -4,6 +4,8 @@ import { ImageBackground, Text, View, Image } from 'react-native';
 import Images from '../../assets/images/Images';
 import Icons from '../../assets/icons/icons';
 import { enableAndroidFontFix } from '../../AndroidFontFix';
+import { TransitionPresets } from '@react-navigation/bottom-tabs';
+
 enableAndroidFontFix();
 
 function TabIcon({tabName, tabIcon, focused}){
@@ -47,6 +49,7 @@ const _layout = () => {
           position: 'absolute',
           borderTopWidth: 0,
         },
+         ...TransitionPresets.ShiftTransition
     }}>
       <Tabs.Screen name="Index" options={{tabBarIcon: ({focused, color, size})=>{
         return(
