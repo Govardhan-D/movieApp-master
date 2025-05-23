@@ -1,6 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
 import { Text, Image, View, ImageBackground, ScrollView, Button, TouchableOpacity, Linking } from "react-native";
-import { SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import useFetch from "../../services/useFetch";
 import fetchMovies from "../../services/api";
 import Icons from "../../assets/icons/icons";
@@ -25,12 +24,13 @@ export default function MovieInfo(){
     const budget = (data?.budget/1000000).toFixed(1).replace(/\.0$/, '') + ' million';
     const revenue = (data?.revenue/1000000).toFixed(1).replace(/\.0$/, '') + ' million';
     const companies = data?.production_companies.map((company) => company.name).join('  •  ');
-
-
-    
+    const trailers = data?.videos?.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
+    let trailerUrl;
+    trailers ? trailerUrl = `https://www.youtube.com/watch?v=${trailers[0].key}` : trailerUrl = "No Trailer";
+    console.log(trailerUrl)
     function DataBox({content}){
       return(
-        <View className="py-[6px] px-[10px] bg-[#221F3D] rounded-[4px]">
+        <View className="py-[6px] px-[10px] bg-[#221F3D] rounded-[4px] max-w-[116px] flex justify-center items-center">
           <Text className="font-bold text-[12px] text-white">{content}</Text>
         </View>
       )
@@ -43,15 +43,18 @@ export default function MovieInfo(){
               <ScrollView>
                 <View className="relative">
                     <ImageBackground source={{uri: url}} className="w-full h-[550]" resizeMode="cover"/> 
-                    <View className="w-[50] h-[50] flex flex-1 justify-center items-center bg-white z-10 rounded-full absolute top-[95%] right-[20]">
-                        <Image source={Icons.play} className="w-[20] h-[24]"/>
-                    </View>
+                    <TouchableOpacity className="w-[50] h-[50] flex flex-1 justify-center items-center bg-white z-10 rounded-full absolute top-[95%] right-[20]" onPress={() => Linking.openURL( `https://www.youtube.com/watch?v=${trailers[0].key}`)}>
+                        <Image source={Icons.play} className="w-[20] h-[24]" />
+                    </TouchableOpacity>
                 </View>
                 <View className="px-5">
                     <Text className="font-bold text-[20px] text-white mt-[18]">{data.title}</Text>
                     <Text className="font-normal text-[14px] mt-[10] text-[#A8B5DB]">{data.release_date.split('-')[0]} • {runtime.hours}h {runtime.minutes}m</Text>
                 </View>
-                
+                <View className="px-5 mt-[10]">
+                  <DataBox content={"⭐ "+data.vote_average.toFixed(1)}/>
+
+                </View>
                 <InfoBox title="Overview" content={data.overview}/>
                 <View className="flex flex-row">
                   <InfoBox title="Release Date" content={release_date} />
@@ -74,14 +77,11 @@ export default function MovieInfo(){
                 </TouchableOpacity>
 
                 </View>
-                
-
-
-
 
 
               </ScrollView>
               }
+              {error && <Text className="text-red-400">Error Fetching Movies</Text>}
             </View>
     )
 }
