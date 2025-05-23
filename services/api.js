@@ -5,9 +5,11 @@ const TMDB_CONFIG = {
 
 export default async function fetchMovies({query = '', movieId =  ''}){
     const endpoint = query ? `${TMDB_CONFIG.BASE_URL}/search/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc&query=${query}` : 
-    movieId ? `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}`:
+    movieId ? `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}&append_to_response=release_dates&language=en-US`:
     `${TMDB_CONFIG.BASE_URL}/discover/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc`;
     console.log(endpoint);
+    
+
     try {
         const response = await fetch(endpoint);
         if (!response.ok) {
