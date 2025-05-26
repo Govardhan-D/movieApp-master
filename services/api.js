@@ -3,10 +3,10 @@ const TMDB_CONFIG = {
     API_KEY: process.env.EXPO_PUBLIC_API_KEY,
 };
 
-export default async function fetchMovies({query = '', movieId =  ''}){
+export default async function fetchMovies({page = 1,query = '', movieId =  ''}){
     const endpoint = query ? `${TMDB_CONFIG.BASE_URL}/search/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc&query=${query}` : 
     movieId ? `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}&append_to_response=videos&language=en-US`:
-    `${TMDB_CONFIG.BASE_URL}/discover/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc`;
+    `${TMDB_CONFIG.BASE_URL}/discover/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc&page=${page}`;
     console.log(endpoint);
     
 
@@ -17,7 +17,6 @@ export default async function fetchMovies({query = '', movieId =  ''}){
             throw new Error(response.statusText);
         }
         const data = await response.json();
-        console.log(data)
         if(movieId){
             return data;
         }
