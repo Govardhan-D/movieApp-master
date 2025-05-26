@@ -75,6 +75,7 @@ export default function MovieInfo(){
                             }}
 
                             />
+                          
                         </View>
                     }
 
