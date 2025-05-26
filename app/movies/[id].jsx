@@ -1,19 +1,35 @@
 import { useLocalSearchParams } from "expo-router";
-import { Text, Image, View, ImageBackground, ScrollView, Button, TouchableOpacity, Linking } from "react-native";
+import { Text, Image, View, ImageBackground, ScrollView, Button, TouchableOpacity, Linking, StyleSheet } from "react-native";
 import useFetch from "../../services/useFetch";
 import fetchMovies from "../../services/api";
 import Icons from "../../assets/icons/icons";
 import { convertDate, convertRuntime, genreMapping } from "../../services/utils";
 import InfoBox from "../../components/InfoBox";
+import { useState, useCallback } from "react";
+import YoutubePlayer from 'react-native-youtube-iframe'
 
 export default function MovieInfo(){
     const {id} = useLocalSearchParams();
+    
 
     const { data, loading, error } = useFetch(() => 
     fetchMovies({
       movieId: id,
     })
     )
+      const [playing, setPlaying] = useState(false);
+
+    const onStateChange = useCallback((state) => {
+      if (state === "ended") {
+        setPlaying(false);
+      }
+    }, []);
+
+    const togglePlaying = useCallback(() => {
+      setPlaying((prev) => !prev);
+    }, []);
+
+
     const url = `https://image.tmdb.org/t/p/original/${data?.backdrop_path}`;
     console.log(url)
     const runtime = convertRuntime(data?.runtime);
@@ -25,9 +41,9 @@ export default function MovieInfo(){
     const revenue = (data?.revenue/1000000).toFixed(1).replace(/\.0$/, '') + ' million';
     const companies = data?.production_companies.map((company) => company.name).join('  •  ');
     const trailers = data?.videos?.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
-    let trailerUrl;
-    trailers ? trailerUrl = `https://www.youtube.com/watch?v=${trailers[0].key}` : trailerUrl = "No Trailer";
-    console.log(trailerUrl)
+    let trailerKey = 
+    trailers ? trailerKey = trailers[0].key : trailerKey = "No Trailer";
+    console.log(trailerKey)
     function DataBox({content}){
       return(
         <View className="py-[6px] px-[10px] bg-[#221F3D] rounded-[4px] max-w-[116px] flex justify-center items-center">
@@ -42,7 +58,30 @@ export default function MovieInfo(){
               {data && 
               <ScrollView>
                 <View className="relative">
-                    <ImageBackground source={{uri: url}} className="w-full h-[550]" resizeMode="cover"/> 
+                    <ImageBackground source={{uri: url}} className="w-full h-[200] z-0" resizeMode="cover" style={StyleSheet.absoluteFillObject}/> 
+                    {trailerKey &&
+                        <View className="relative">
+                          <YoutubePlayer
+                            height={300}
+                            play={true}
+                            videoId={trailerKey}
+                            onChangeState={onStateChange} 
+                              initialPlayerParams={{
+                              controls: 0,    // Hide all controls
+                              modestbranding: true, // Less YouTube branding
+                              rel: 0,          // Don’t show related videos
+                              showinfo: 0,     // Deprecated, but was used to hide video info
+                              fs: 0,           // Hide fullscreen button
+                            }}
+
+                            />
+                        </View>
+                    }
+
+                    
+
+                    
+                    
                     <TouchableOpacity className="w-[50] h-[50] flex flex-1 justify-center items-center bg-white z-10 rounded-full absolute top-[95%] right-[20]" onPress={() => Linking.openURL( `https://www.youtube.com/watch?v=${trailers[0].key}`)}>
                         <Image source={Icons.play} className="w-[20] h-[24]" />
                     </TouchableOpacity>

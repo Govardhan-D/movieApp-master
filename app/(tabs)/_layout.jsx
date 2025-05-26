@@ -5,6 +5,7 @@ import Images from '../../assets/images/Images';
 import Icons from '../../assets/icons/icons';
 import { enableAndroidFontFix } from '../../AndroidFontFix';
 import { TransitionPresets } from '@react-navigation/bottom-tabs';
+import BookmarkContextProvider from '../../contexts/BookmarkContext';
 
 enableAndroidFontFix();
 
@@ -32,6 +33,8 @@ function TabIcon({tabName, tabIcon, focused}){
 }
 const _layout = () => {
   return (
+    <BookmarkContextProvider>
+
     <Tabs screenOptions={{headerShown: false,
         tabBarShowLabel: false,
         tabBarItemStyle:{
@@ -76,6 +79,8 @@ const _layout = () => {
       }}} />
 
     </Tabs>
+    </BookmarkContextProvider>
+
  
   )
 }

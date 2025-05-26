@@ -1,8 +1,14 @@
 import { Link } from "expo-router";
-import { Image, Text, TouchableOpacity } from "react-native";
+import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { BookmarkContext } from "../contexts/BookmarkContext";
+import { useContext, useState } from "react";
+import Icons from "../assets/icons/icons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 
 export default function MovieCard({movie}){
-    
+  const {bookmarks, addBookmarks, isBookmarked, removeBookmark} = useContext(BookmarkContext);
+  const bookmarked = isBookmarked(movie.id);    
   const genre_mapping = [
     {
       "id": 28,
@@ -81,7 +87,6 @@ export default function MovieCard({movie}){
       "name": "Western"
     }
   ]
-    console.log(movie.id)
 
     const IMG_BASE_URL = "https://image.tmdb.org/t/p/w185/";
     const URL = `${IMG_BASE_URL}${movie.poster_path}`
@@ -95,12 +100,27 @@ export default function MovieCard({movie}){
     
     return(
       <Link href={`/movies/${movie.id}`} asChild>
-        <TouchableOpacity className="w-[30%]">
-            <Image
-            source={{ uri: URL }}
-            className="w-full h-52 rounded-lg"
-            resizeMode="cover"
-            />
+        <TouchableOpacity className="w-[30%]" on>
+            <View className="relative">
+              <Image
+              source={{ uri: URL }}
+              className="w-full h-52 rounded-lg"
+              resizeMode="cover"
+              />
+              <Pressable onPress={() => {
+                if(!bookmarked) {
+                  addBookmarks({movie});
+                }
+                else{
+                  removeBookmark(movie.id)
+                }
+              }
+            } className="absolute right-1 top-1 z-99">
+                <MaterialIcons name={bookmarked ? "bookmark": "bookmark-border"} size={24} color="white" />
+              </Pressable>
+
+            </View>
+            
             <Text className="text-white font-bold text-sm mt-2" numberOfLines={1}>{movie.title}</Text>
             <Text className="text-white text-[10px] font-bold mt-[8px]">⭐ {movie.vote_average.toFixed(1)}</Text>
             <Text className="text-white font-medium text-[10px] mt-[5px]">{genre_names}</Text>

@@ -5,7 +5,7 @@ const TMDB_CONFIG = {
 
 export default async function fetchMovies({page = 1,query = '', movieId =  ''}){
     const endpoint = query ? `${TMDB_CONFIG.BASE_URL}/search/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc&query=${query}` : 
-    movieId ? `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}&append_to_response=videos&language=en-US`:
+    movieId ? `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}&append_to_response=videos,images&language=en-US`:
     `${TMDB_CONFIG.BASE_URL}/discover/movie?api_key=${TMDB_CONFIG.API_KEY}&sort_by=popularity.desc&page=${page}`;
     console.log(endpoint);
     
