@@ -9,10 +9,9 @@ const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProje
 const db = new Databases(client)
 
 async function updateRecord(query, movie){
-    console.log("hi")
     try{
         const result = await db.listDocuments(DATABASE_ID, COLLECTION_ID, [
-            Query.equal('search_term', query)
+            Query.equal('search_term', movie.title)
         ])
         if(result.documents.length>0){
             console.log("Updating Record");
@@ -21,7 +20,6 @@ async function updateRecord(query, movie){
             await db.updateDocument(DATABASE_ID, COLLECTION_ID, existingMovie.$id, {
                 count: existingMovie.count + 1
             })
-            db.updateDocument();
         }
         else{
             console.log("Creating a document");
@@ -45,6 +43,7 @@ async function getTrendingMovies(){
             Query.limit(5),
             Query.orderDesc('count')
         ])
+        console.log(result.documents)
         return result.documents
     }
     catch(error){

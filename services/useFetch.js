@@ -9,11 +9,12 @@ const useFetch = (fetchFunction, autofetch=true, infiniteScrolling=false) => {
     
 
     const fetchData = async() => {
+        console.log("fetching Data");
         try{
             setError(null)
             setLoading(true);
-            if(infiniteScrolling) setPage(prev => prev+1)
-            let result = await fetchFunction();
+            let result = await fetchFunction({page});
+            setPage(2);
             setData(result);
         }
         catch(err){
@@ -26,11 +27,15 @@ const useFetch = (fetchFunction, autofetch=true, infiniteScrolling=false) => {
     }
     const loadMore = async () => {
       try {
-        const moreData = await fetchFunction({ page: page });
+        const next = page + 1
+        const moreData = await fetchFunction({ page: next });
+        
         setData(prev => [...prev, ...moreData]);
-        setPage(prev => prev + 1);
+        setPage(next);
+
       } catch (err) {
         console.error("Error loading more data", err);
+        setError(err)
       }
     };
     
@@ -48,7 +53,8 @@ const useFetch = (fetchFunction, autofetch=true, infiniteScrolling=false) => {
         }
     },[])
 
-    return {data, loading, error, page, refetch: fetchData, reset, setData, loadMore};
+
+    return {data, loading, error, page, setPage, refetch: fetchData, reset, setData, loadMore};
 }
 
 

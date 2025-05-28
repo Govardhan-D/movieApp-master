@@ -9,6 +9,7 @@ import { useState, useCallback } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe'
 
 export default function MovieInfo(){
+    
     const {id} = useLocalSearchParams();
     
 
@@ -17,6 +18,8 @@ export default function MovieInfo(){
       movieId: id,
     })
     )
+    // or a fallback
+
     const [playing, setPlaying] = useState(false);
 
     const onStateChange = useCallback((state) => {
@@ -28,7 +31,6 @@ export default function MovieInfo(){
     const togglePlaying = useCallback(() => {
       setPlaying((prev) => !prev);
     }, []);
-
 
     const backdropURL = `https://image.tmdb.org/t/p/original/${data?.backdrop_path}`;
     const runtime = convertRuntime(data?.runtime);
@@ -42,10 +44,7 @@ export default function MovieInfo(){
     const trailers = data?.videos.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
     let trailerKey = trailers ? trailerKey = trailers[0].key : trailerKey = "No Trailer";
     const logoPATH = data?.images.logos.filter((logo) => logo.iso_639_1 === "en")[0]?.file_path;
-    console.log(logoPATH)
     const logoURL = `https://image.tmdb.org/t/p/original${logoPATH}`;
-    console.log(logoURL);
-    console.log()
     function DataBox({content}){
       return(
         <View className="py-[6px] px-[10px] bg-[#221F3D] rounded-[4px] max-w-[116px] flex justify-center items-center">
@@ -81,7 +80,7 @@ export default function MovieInfo(){
                               
 
                             }}
-                            webViewStyle={{opacity: 0.6}
+                            webViewStyle={{opacity: 0.9}
                             }
                             />
                             {logoPATH &&<Image source={{uri: logoURL}}  className="w-[300] h-[200] z-99 absolute top-1/2 left-1/2 translate-x-[-150] translate-y-[-100]" resizeMode="stretch" />}
@@ -97,7 +96,7 @@ export default function MovieInfo(){
                     
                     
                     <TouchableOpacity className="w-[50] h-[50] flex flex-1 justify-center items-center bg-white z-10 rounded-full absolute top-[95%] right-[20]" onPress={() => Linking.openURL( `https://www.youtube.com/watch?v=${trailers[0].key}`)}>
-                        <Image source={Icons.play} className="w-[20] h-[24]" />
+                        <Image source={Icons.play} className="w-[20] h-[24]" resizeMode="stretch"/>
                     </TouchableOpacity>
                 </View>
                 <View className="px-5">

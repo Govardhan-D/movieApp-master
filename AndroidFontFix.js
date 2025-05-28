@@ -8,7 +8,6 @@ export function enableAndroidFontFix() {
   }
 
   let manufacturer = Device.manufacturer;
-  console.log(manufacturer);
 
   let styles;
 

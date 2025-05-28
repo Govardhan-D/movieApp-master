@@ -35,7 +35,6 @@ export default function BookmarkContextProvider({children}){
         
     }, [])
     useEffect(() => {
-        console.log(bookmarks)
         updateAsyncStorage();
     }, [bookmarks])
 
