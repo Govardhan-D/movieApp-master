@@ -41,7 +41,7 @@ export default function MovieInfo(){
     const companies = data?.production_companies.map((company) => company.name).join('  •  ');
     const trailers = data?.videos.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
     let trailerKey = trailers ? trailerKey = trailers[0].key : trailerKey = "No Trailer";
-    const logoPATH = data?.images.logos.filter((logo) => logo.iso_639_1 === "en")[0].file_path;
+    const logoPATH = data?.images.logos.filter((logo) => logo.iso_639_1 === "en")[0]?.file_path;
     console.log(logoPATH)
     const logoURL = `https://image.tmdb.org/t/p/original${logoPATH}`;
     console.log(logoURL);
@@ -69,6 +69,7 @@ export default function MovieInfo(){
                             play={true}
                             mute={true}
                             videoId={trailerKey}
+                            playlist={[trailerKey]}
                             onChangeState={onStateChange} 
                               initialPlayerParams={{
                               controls: 0,    
@@ -77,12 +78,13 @@ export default function MovieInfo(){
                               showinfo: 0,     
                               fs: 0,
                               showClosedCaptions: false,
+                              
 
                             }}
                             webViewStyle={{opacity: 0.6}
                             }
                             />
-                            <Image source={{uri: logoURL}}  className="w-[300] h-[200] z-99 absolute top-1/2 left-1/2 translate-x-[-150] translate-y-[-100]" resizeMode="stretch" />
+                            {logoPATH &&<Image source={{uri: logoURL}}  className="w-[300] h-[200] z-99 absolute top-1/2 left-1/2 translate-x-[-150] translate-y-[-100]" resizeMode="stretch" />}
 
 
                             
