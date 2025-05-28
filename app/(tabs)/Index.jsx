@@ -30,9 +30,9 @@ const Home = () => {
           <Image source={Icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
           <SearchBar onPress={() => {router.push('/Search')}}/>
 
-          <Text className="text-bold text-white text-[20px] font-bold mt-8">Latest Movies</Text>  &&
-          {loading && <Text>Loading...</Text>}
-          {data && data.length>0 && <FlatList 
+          <Text className="text-bold text-white text-[20px] font-bold mt-8">Latest Movies</Text>
+          {Boolean(loading) ? <Text>Loading...</Text> : null}
+          {Boolean(data?.length>0) && <FlatList 
                                     data={data} 
                                     renderItem={({item}) => <MovieCard movie={item} />}  
                                     keyExtractor={(item) => item.id.toString()}
@@ -49,7 +49,7 @@ const Home = () => {
 
                                     />}
 
-          {error && <Text className="text-white">{error}</Text>}
+          {Boolean(error) && <Text className="text-white">{error}</Text>}
 
         </ScrollView>
       </SafeAreaView>

@@ -17,11 +17,11 @@ export default function MovieInfo(){
       movieId: id,
     })
     )
-      const [playing, setPlaying] = useState(false);
+    const [playing, setPlaying] = useState(false);
 
     const onStateChange = useCallback((state) => {
-      if (state === "ended") {
-        setPlaying(false);
+      if (state === "playing") {
+        setPlaying(true);
       }
     }, []);
 
@@ -30,8 +30,7 @@ export default function MovieInfo(){
     }, []);
 
 
-    const url = `https://image.tmdb.org/t/p/original/${data?.backdrop_path}`;
-    console.log(url)
+    const backdropURL = `https://image.tmdb.org/t/p/original/${data?.backdrop_path}`;
     const runtime = convertRuntime(data?.runtime);
     const release_date = convertDate(data?.release_date);
 
@@ -40,10 +39,13 @@ export default function MovieInfo(){
     const budget = (data?.budget/1000000).toFixed(1).replace(/\.0$/, '') + ' million';
     const revenue = (data?.revenue/1000000).toFixed(1).replace(/\.0$/, '') + ' million';
     const companies = data?.production_companies.map((company) => company.name).join('  •  ');
-    const trailers = data?.videos?.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
-    let trailerKey = 
-    trailers ? trailerKey = trailers[0].key : trailerKey = "No Trailer";
-    console.log(trailerKey)
+    const trailers = data?.videos.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
+    let trailerKey = trailers ? trailerKey = trailers[0].key : trailerKey = "No Trailer";
+    const logoPATH = data?.images.logos[0].file_path;
+    console.log(logoPATH)
+    const logoURL = `https://image.tmdb.org/t/p/original${logoPATH}`;
+    console.log(logoURL);
+    console.log()
     function DataBox({content}){
       return(
         <View className="py-[6px] px-[10px] bg-[#221F3D] rounded-[4px] max-w-[116px] flex justify-center items-center">
@@ -58,24 +60,33 @@ export default function MovieInfo(){
               {data && 
               <ScrollView>
                 <View className="relative">
-                    <ImageBackground source={{uri: url}} className="w-full h-[200] z-0" resizeMode="cover" style={StyleSheet.absoluteFillObject}/> 
+                    {!playing && <ImageBackground source={{uri: backdropURL}} className="w-full h-[200] z-0" resizeMode="cover" style={StyleSheet.absoluteFillObject}/> }
                     {trailerKey &&
                         <View className="relative">
                           <YoutubePlayer
                             height={300}
+                            loop={true}
                             play={true}
+                            mute={true}
                             videoId={trailerKey}
                             onChangeState={onStateChange} 
                               initialPlayerParams={{
-                              controls: 0,    // Hide all controls
-                              modestbranding: true, // Less YouTube branding
-                              rel: 0,          // Don’t show related videos
-                              showinfo: 0,     // Deprecated, but was used to hide video info
-                              fs: 0,           // Hide fullscreen button
-                            }}
+                              controls: 0,    
+                              modestbranding: true, 
+                              rel: 0,          
+                              showinfo: 0,     
+                              fs: 0,
+                              showClosedCaptions: false,
 
+                            }}
+                            webViewStyle={{opacity: 0.6}
+                            }
                             />
-                          
+                            <Image source={{uri: logoURL}}  className="w-[300] h-[200] z-99 absolute top-1/2 left-1/2 translate-x-[-150] translate-y-[-100]" resizeMode="stretch" />
+
+
+                            
+
                         </View>
                     }
 

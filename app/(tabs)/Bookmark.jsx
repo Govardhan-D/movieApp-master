@@ -17,8 +17,8 @@ export default function Bookmark(){
           minHeight: "100%",
           paddingBottom: 10
         }}>
-          <Text className="text-bold text-white text-[20px] font-bold mt-8">Saved</Text>  &&
-          {bookmarks && bookmarks.length>0 && <FlatList 
+          <Text className="text-bold text-white text-[20px] font-bold mt-8">Saved</Text>
+          {!!bookmarks && bookmarks.length>0 && <FlatList 
                                     data={bookmarks} 
                                     renderItem={({item}) => <MovieCard movie={item} />}  
                                     keyExtractor={(item) => item.id.toString()}
