@@ -41,7 +41,7 @@ export default function MovieInfo(){
     const companies = data?.production_companies.map((company) => company.name).join('  •  ');
     const trailers = data?.videos.results.filter((video) => video.type==="Trailer" && video.site==="YouTube");
     let trailerKey = trailers ? trailerKey = trailers[0].key : trailerKey = "No Trailer";
-    const logoPATH = data?.images.logos[0].file_path;
+    const logoPATH = data?.images.logos.filter((logo) => logo.iso_639_1 === "en")[0].file_path;
     console.log(logoPATH)
     const logoURL = `https://image.tmdb.org/t/p/original${logoPATH}`;
     console.log(logoURL);
