@@ -1,12 +1,12 @@
-import { Account, Client, Databases, ID, Query } from "react-native-appwrite"
+import { Account, Client, Databases, ID, Query, Role, Permission } from "react-native-appwrite"
 import * as Keychain from 'react-native-keychain'
 
 const PROJECT_ID = process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID
 const COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID
+const BOOKMARK_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_BOOKMARK_COLLECTION_ID;
 
 const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject(PROJECT_ID);
-
 const db = new Databases(client)
 const account = new Account(client)
 
@@ -80,4 +80,36 @@ async function getTrendingMovies(){
         throw error;
     }
 }
-export {updateRecord, getTrendingMovies, sendOTP, verifyOTP, getCurrentUser};
+
+async function updateBookmarks(movie, userId){
+    console.log("Syncing Bookmarks");
+
+    try{
+        await db.createDocument(DATABASE_ID,BOOKMARK_COLLECTION_ID, ID.unique(), {
+            poster_path: `https://image.tmdb.org/t/p/w185${movie.poster_path}`,
+            movie_id: movie.id,
+            title: movie.title,
+            genre_ids: movie.genre_ids,
+        },[
+            Permission.read(Role.user(userId)),
+            Permission.update(Role.user(userId)),
+            Permission.delete(Role.user(userId))
+
+        ]
+        )
+        console.log("Bookmarks Synced");
+
+    }catch(error){
+        console.log("error creating document ", error)
+    }
+}
+
+async function getBookmarks(){
+    const bookmarks = await db.listDocuments(DATABASE_ID, BOOKMARK_COLLECTION_ID);
+    return bookmarks.documents;
+}
+
+
+
+
+export {updateRecord, getTrendingMovies, sendOTP, verifyOTP, getCurrentUser, updateBookmarks, getBookmarks};
