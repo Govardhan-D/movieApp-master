@@ -54,7 +54,7 @@ const _layout = () => {
         },
          ...TransitionPresets.ShiftTransition
     }}>
-      <Tabs.Screen name="Index" options={{tabBarIcon: ({focused, color, size})=>{
+      <Tabs.Screen name="Home" options={{tabBarIcon: ({focused, color, size})=>{
         return(
           <TabIcon tabName="Home" tabIcon={Icons.home} focused={focused} color={color} size={size}/>
 

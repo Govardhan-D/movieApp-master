@@ -1,4 +1,5 @@
-import { Client, Databases, ID, Query } from "react-native-appwrite"
+import { Account, Client, Databases, ID, Query } from "react-native-appwrite"
+import * as Keychain from 'react-native-keychain'
 
 const PROJECT_ID = process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID
@@ -7,6 +8,35 @@ const COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID
 const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject(PROJECT_ID);
 
 const db = new Databases(client)
+const account = new Account(client)
+
+async function sendOTP(email){
+    try{
+        const sessionToken = await account.createEmailToken(ID.unique(), email);
+        console.log("otp sent");
+        return sessionToken;
+    }
+    catch(error){
+        console.log(`Error sending otp: ${error}`);
+        return error;
+    }
+}
+
+async function verifyOTP(userId, OTP){
+    try{
+        const session = await account.createSession(userId, OTP);
+        return session;
+    }
+    catch(error){
+        console.log(error);
+        return error;
+    }
+}
+
+async function getCurrentUser(){
+    const currentUser = account.get();
+    return currentUser;
+}
 
 async function updateRecord(query, movie){
     try{
@@ -35,7 +65,6 @@ async function updateRecord(query, movie){
         console.log(error);
         throw error;
     }
-
 }
 async function getTrendingMovies(){
     try{
@@ -51,4 +80,4 @@ async function getTrendingMovies(){
         throw error;
     }
 }
-export {updateRecord, getTrendingMovies};
+export {updateRecord, getTrendingMovies, sendOTP, verifyOTP, getCurrentUser};
